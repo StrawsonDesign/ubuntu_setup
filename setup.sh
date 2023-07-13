@@ -1,5 +1,8 @@
 #!/bin/bash
 
+## quit on error
+set -e
+
 TO_INSTALL="
 apt-transport-https
 ca-certificates
@@ -56,7 +59,7 @@ sudo apt autoremove -y
 
 start_step "Installing tools: $TO_INSTALL"
 sudo apt update
-sudo apt install -y
+sudo apt install -y $TO_INSTALL
 sudo apt autoremove -y
 
 
@@ -74,11 +77,12 @@ sudo apt install -y sublime-text
 
 
 start_step "Installing Sublime Settings"
-cp -f $THIS_DIR/Preferences.sublime-settings ~/.config/sublime-text/Packages/User/
+mkdir -p ~/.config/sublime-text/Packages/User/
+cp -f $THIS_DIR/files/Preferences.sublime-settings ~/.config/sublime-text/Packages/User/
 
 
 start_step "Installing mimetype list"
-cp -f $THIS_DIR/mimeapps.list ~/.config/
+cp -f $THIS_DIR/files/mimeapps.list ~/.config/
 
 
 start_step "Installing Signal"
@@ -91,9 +95,11 @@ sudo apt update
 sudo apt install -y signal-desktop
 
 
-start_step "Installing Docker & docker-compose"
+start_step "Installing Docker"
 cd /tmp/
-sudo apt remove docker docker-engine docker.io containerd runc
+# Docker instruction say to remove these but then we end up
+# removing and reinstalling every time the script is run
+sudo apt remove -y docker docker-engine docker.io containerd runc
 sudo apt update
 sudo install -m 0755 -d /etc/apt/keyrings
 sudo rm -f /etc/apt/keyrings/docker.gpg
@@ -103,7 +109,7 @@ echo \
   "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
   "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
 
 
@@ -116,14 +122,18 @@ sudo usermod -a -G docker $USER
 start_step "Installing voxl-docker"
 mkdir -p ~/git
 cd ~/git
-git clone https://gitlab.com/voxl-public/voxl-docker
+if [ ! -d voxl-docker ]; then
+	git clone https://gitlab.com/voxl-public/voxl-docker
+fi
 cd voxl-docker
 ./install-voxl-docker-script.sh
 
 
 start_step "Installing ADB"
+set +e
 sudo apt install -y android-tools-adb android-tools-fastboot
-
+sudo apt install -y adb fastboot
+set -e
 
 start_step "Installing gsutil"
 sudo rm -f /etc/apt/sources.list.d/google-cloud-sdk.list
