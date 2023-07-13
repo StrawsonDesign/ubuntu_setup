@@ -1,0 +1,9 @@
+{
+	"color_scheme": "Monokai.sublime-color-scheme",
+	"font_size": 18,
+	"rulers": [80],
+	"trim_trailing_white_space_on_save": "all",
+	"ensure_newline_at_eof_on_save": true,
+	"draw_white_space": ["all"],
+	"auto_complete_commit_on_tab": true,
+}

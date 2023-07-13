@@ -1,0 +1,15 @@
+# my aliases
+
+gittag(){
+	git push
+	git tag $1
+	git push origin $1
+}
+
+alias voxl="adb wait-for-device && adb shell"
+
+export VOXL_IP=192.168.8.1
+
+alias sshh='sshpass -p oelinux123 ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@${VOXL_IP}'
+
+alias voxl-cross='voxl-docker -i voxl-cross'

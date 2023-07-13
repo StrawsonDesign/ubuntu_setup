@@ -1,0 +1,32 @@
+[Added Associations]
+application/x-shellscript=sublime_text.desktop;
+text/x-changelog=sublime_text.desktop;
+text/x-cmake=sublime_text.desktop;
+text/markdown=sublime_text.desktop;
+text/x-chdr=sublime_text.desktop;
+text/x-csrc=sublime_text.desktop;
+video/mp4=vlc.desktop;
+text/x-c++src=sublime_text.desktop;
+video/x-matroska=vlc.desktop;
+text/x-python3=sublime_text.desktop;
+application/x-yaml=sublime_text.desktop;
+application/octet-stream=vlc.desktop;
+text/x-c++hdr=sublime_text.desktop;
+image/png=shotwell-viewer.desktop;
+text/plain=sublime_text.desktop;
+text/rust=sublime_text.desktop;
+
+[Default Applications]
+application/x-shellscript=sublime_text.desktop
+text/x-changelog=sublime_text.desktop
+text/x-cmake=sublime_text.desktop
+text/markdown=sublime_text.desktop
+text/x-chdr=sublime_text.desktop
+text/x-csrc=sublime_text.desktop
+video/mp4=vlc.desktop
+text/x-c++src=sublime_text.desktop
+video/x-matroska=vlc.desktop
+application/x-yaml=sublime_text.desktop
+image/png=shotwell-viewer.desktop
+text/rust=sublime_text.desktop
+text/plain=sublime_text.desktop
