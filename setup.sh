@@ -16,6 +16,7 @@ gnome-tweaks
 audacity
 mediainfo-gui
 ffmpeg
+ssh
 python3-pip"
 
 
