@@ -51,6 +51,9 @@ mkdir -p ~/tmp/
 start_step "Setting Bookmarks"
 cp -f "$THIS_DIR/files/bookmarks" ~/.config/gtk-3.0/
 
+start_step "Copying in Bash Aliases"
+cp -f "$THIS_DIR/files/aliases" ~/.bash_aliases
+
 
 start_step "Removing Some Clutter"
 sudo apt remove -y $TO_REMOVE
