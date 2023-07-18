@@ -17,6 +17,8 @@ audacity
 mediainfo-gui
 ffmpeg
 ssh
+i7z
+stress
 python3-pip"
 
 
