@@ -70,16 +70,24 @@ sudo apt autoremove -y
 
 
 start_step "Installing Audio Recorder"
-sudo apt-add-repository -y ppa:audio-recorder/ppa
-sudo apt update
-sudo apt install -y audio-recorder
+if [ -f /usr/bin/audio-recorder ]; then
+	echo "audio-recorder already installed"
+else
+	sudo apt-add-repository -y ppa:audio-recorder/ppa
+	sudo apt update
+	sudo apt install -y audio-recorder
+fi
 
 
 start_step "Installing Sublime"
-wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/sublimehq-archive.gpg > /dev/null
-echo "deb https://download.sublimetext.com/ apt/stable/" | sudo tee /etc/apt/sources.list.d/sublime-text.list
-sudo apt update
-sudo apt install -y sublime-text
+if [ -f /opt/sublime_text/sublime_text ]; then
+	echo "sublime already installed"
+else
+	wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/sublimehq-archive.gpg > /dev/null
+	echo "deb https://download.sublimetext.com/ apt/stable/" | sudo tee /etc/apt/sources.list.d/sublime-text.list
+	sudo apt update
+	sudo apt install -y sublime-text
+fi
 
 
 start_step "Installing Sublime Settings"
@@ -91,38 +99,63 @@ start_step "Installing mimetype list"
 cp -f $THIS_DIR/files/mimeapps.list ~/.config/
 
 
+
+start_step "Installing QGroundControl"
+if [ -f /usr/bin/QGroundControl.AppImage ]; then
+	echo "QGroundControl already installed"
+else
+	sudo usermod -a -G dialout $USER
+	sudo apt-get remove -y modemmanager -y
+	sudo apt install -y gstreamer1.0-plugins-bad gstreamer1.0-libav gstreamer1.0-gl libqt5gui5 libfuse2
+	cd ~/Desktop
+	wget https://d176tv9ibo4jno.cloudfront.net/latest/QGroundControl.AppImage
+	chmod +x QGroundControl.AppImage
+fi
+
+
+
 start_step "Installing Signal"
-cd /tmp/
-wget -O- https://updates.signal.org/desktop/apt/keys.asc | gpg --dearmor > signal-desktop-keyring.gpg
-cat signal-desktop-keyring.gpg | sudo tee /usr/share/keyrings/signal-desktop-keyring.gpg > /dev/null
-echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/signal-desktop-keyring.gpg] https://updates.signal.org/desktop/apt xenial main' |\
-sudo tee /etc/apt/sources.list.d/signal-xenial.list
-sudo apt update
-sudo apt install -y signal-desktop
+if [ -f /usr/bin/signal-desktop ]; then
+	echo "signal already installed"
+else
+	cd /tmp/
+	wget -O- https://updates.signal.org/desktop/apt/keys.asc | gpg --dearmor > signal-desktop-keyring.gpg
+	cat signal-desktop-keyring.gpg | sudo tee /usr/share/keyrings/signal-desktop-keyring.gpg > /dev/null
+	echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/signal-desktop-keyring.gpg] https://updates.signal.org/desktop/apt xenial main' |\
+	sudo tee /etc/apt/sources.list.d/signal-xenial.list
+	sudo apt update
+	sudo apt install -y signal-desktop
+fi
 
 
 start_step "Installing Docker"
-cd /tmp/
-# Docker instruction say to remove these but then we end up
-# removing and reinstalling every time the script is run
-sudo apt remove -y docker docker-engine docker.io containerd runc
-sudo apt update
-sudo install -m 0755 -d /etc/apt/keyrings
-sudo rm -f /etc/apt/keyrings/docker.gpg
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-sudo chmod a+r /etc/apt/keyrings/docker.gpg
-echo \
-  "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-  "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
-  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-
+if [ -f /usr/bin/docker ]; then
+	echo "docker already installed"
+else
+	cd /tmp/
+	# Docker instruction say to remove these but then we end up
+	# removing and reinstalling every time the script is run
+	sudo apt remove -y docker docker-engine docker.io containerd runc
+	sudo apt update
+	sudo install -m 0755 -d /etc/apt/keyrings
+	sudo rm -f /etc/apt/keyrings/docker.gpg
+	curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+	sudo chmod a+r /etc/apt/keyrings/docker.gpg
+	echo \
+	  "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+	  "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
+	  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+	sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+fi
 
 
 start_step "Installing docker-compose"
-sudo apt install -y docker-compose
-sudo usermod -a -G docker $USER
-
+if [ -f /usr/bin/docker-compose ]; then
+	echo "docker-compose already installed"
+else
+	sudo apt install -y docker-compose
+	sudo usermod -a -G docker $USER
+fi
 
 
 start_step "Installing voxl-docker"
@@ -136,24 +169,39 @@ cd voxl-docker
 
 
 start_step "Installing ADB"
-set +e
-sudo apt install -y android-tools-adb android-tools-fastboot
-sudo apt install -y adb fastboot
-set -e
+if [ -f /usr/bin/adb ]; then
+	echo "adb already installed"
+else
+	set +e
+	sudo apt install -y android-tools-adb android-tools-fastboot
+	sudo apt install -y adb fastboot
+	set -e
+fi
 
 start_step "Installing gsutil"
-sudo rm -f /etc/apt/sources.list.d/google-cloud-sdk.list
-echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
-curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
-sudo apt-get update && sudo apt-get install google-cloud-cli
-
+if [ -f /usr/bin/gsutil ]; then
+	echo "gsutil already installed"
+else
+	sudo rm -f /etc/apt/sources.list.d/google-cloud-sdk.list
+	echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+	curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
+	sudo apt-get update && sudo apt-get install google-cloud-cli
+fi
 
 start_step "Installing youtube-dl with pip"
-sudo pip3 install --upgrade youtube_dl
+if [ -f /usr/local/bin/youtube-dl ]; then
+	echo "youtube-dl already installed"
+else
+	sudo pip3 install --upgrade youtube_dl
+fi
 
 
 start_step "Installing Slack"
-sudo snap install slack --classic
+if [ -f /usr/bin/slack ]; then
+	echo "slack already installed"
+else
+	sudo snap install slack --classic
+fi
 
 
 start_step "Final Cleanup and Update"
