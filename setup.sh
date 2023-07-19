@@ -19,6 +19,7 @@ ffmpeg
 ssh
 i7z
 stress
+net-tools
 python3-pip"
 
 
