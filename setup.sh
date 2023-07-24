@@ -69,6 +69,12 @@ sudo apt update
 sudo apt install -y $TO_INSTALL
 sudo apt autoremove -y
 
+start_step "Enabling ssh server"
+set +e
+sudo systemctl enable sshd
+sudo systemctl enable ssh
+set -e
+
 
 start_step "Installing Audio Recorder"
 if [ -f /usr/bin/audio-recorder ]; then
