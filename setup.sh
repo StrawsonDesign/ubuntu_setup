@@ -140,8 +140,10 @@ else
 	cd /tmp/
 	# Docker instruction say to remove these but then we end up
 	# removing and reinstalling every time the script is run
+	set +e
 	sudo apt remove -y docker docker-engine docker.io containerd runc
 	sudo apt update
+	set -e
 	sudo install -m 0755 -d /etc/apt/keyrings
 	sudo rm -f /etc/apt/keyrings/docker.gpg
 	curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
@@ -150,6 +152,7 @@ else
 	  "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
 	  "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
 	  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+	sudo apt update
 	sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 fi
 
