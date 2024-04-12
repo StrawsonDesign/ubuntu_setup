@@ -78,9 +78,23 @@ start_step "Installing Audio Recorder"
 if [ -f /usr/bin/audio-recorder ]; then
 	echo "audio-recorder already installed"
 else
-	sudo apt-add-repository -y ppa:audio-recorder/ppa
-	sudo apt update
-	sudo apt install -y audio-recorder
+	mkdir -p /tmp/add-ppa/
+	set +e
+	wget --quiet "http://ppa.launchpad.net/$(echo $1 | sed -e 's/ppa:audio-recorder/ppa/g')/ubuntu/dists" -O /tmp/add-ppa/support.html
+	grep "$(lsb_release -sc)" "/tmp/add-ppa/support.html" >> /tmp/add-ppa/found.txt
+	cat /tmp/add-ppa/found.txt | sed 's|</b>|-|g' | sed 's|<[^>]*>||g' >> /tmp/add-ppa/stripped_file.txt
+	set -e
+
+	if [[ -s /tmp/add-ppa/stripped_file.txt ]] ; then
+
+		echo "$(lsb_release -sc) is supported"
+
+		sudo apt-add-repository -y ppa:audio-recorder/ppa
+		sudo apt update
+		sudo apt install -y audio-recorder
+	else
+		echo "audio recorder not supported on $(lsb_release -sc) yet"
+	fi
 fi
 
 
@@ -200,7 +214,7 @@ start_step "Installing youtube-dl with pip"
 if [ -f /usr/local/bin/youtube-dl ]; then
 	echo "youtube-dl already installed"
 else
-	sudo pip3 install --upgrade youtube_dl
+	sudo pip3 install --upgrade youtube_dl --break-system-packages
 fi
 
 
