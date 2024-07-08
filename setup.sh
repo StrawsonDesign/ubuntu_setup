@@ -120,7 +120,7 @@ cp -f $THIS_DIR/files/mimeapps.list ~/.config/
 
 
 start_step "Installing QGroundControl"
-if [ -f /usr/bin/QGroundControl.AppImage ]; then
+if [ -f ~/Desktop/QGroundControl.AppImage ]; then
 	echo "QGroundControl already installed"
 else
 	sudo usermod -a -G dialout $USER
@@ -176,9 +176,11 @@ if [ -f /usr/bin/docker-compose ]; then
 	echo "docker-compose already installed"
 else
 	sudo apt install -y docker-compose
-	sudo usermod -a -G docker $USER
 fi
 
+# always add user even if docker is installed as someone might be setting
+# up a second account on a computer where this script was already run
+sudo usermod -a -G docker $USER
 
 start_step "Installing voxl-docker"
 mkdir -p ~/git
